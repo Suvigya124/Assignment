@@ -1,35 +1,48 @@
 
 import './App.css';
 import {useState} from 'react';
+import reactStringReplace from 'react-string-replace';
 
 function App() {
-  const [txt, setTxt] = useState('');
+  const [txt, setTxt] = useState("");
+  const [copy, setCopy] = useState("");
+  const [curr, setCurr] = useState("");
 
-const handleChange = (text)=> {
-  let tx=document.getElementById("area1");
-  setTxt(tx);
-}
-
-const handleHover = ()=> {
-  let txt1=txt;
-  for(let i=0;i<txt1.length();i++)
-  {
-    if(txt1[i]==='a' || txt1[i]==='e' || txt1[i]==='i' || txt1[i]==='o' || txt1[i]==='u' || 
-    txt1[i]==='A' || txt1[i]==='E' || txt1[i]==='I' || txt1[i]==='O' || txt1[i]==='U')
-    {
-        txt1[i].color('blue');
+  const handleOver =()=> {
+      let tx = reactStringReplace(txt, /([aeiouAEIOU])/g, (match, i) => (
+        <span style={{ color: 'red' }} key={match + i}>{match}</span>
+      ));
+      setTxt(tx);
     }
+  const handleChange = (event)=> {
+    let tx=event.target.value;
+    setCurr(tx);
+    tx=tx.split("").reverse().join("");
+    setTxt(tx);
+    setCopy(tx);
   }
-  document.getElementById("area1").innerHTML(txt1);
-}
+  const handleLeave =()=> {
+    setTxt(copy);
+  }
+  const handleReset =()=> {
+    let newText = "";
+    setTxt(newText);
+    setCopy(newText);
+    setCurr("");
+  }
 
   return (
-    <>
-      <div className="container form-group my-3"  onHover={handleHover}>
-        <label forHTML="exampleFormControlTextarea1">Example textarea</label>
-        <textarea className="form-control" id="area1" rows="3"  onChange={handleChange}></textarea>
+    <div className="container my-3 mx-3">
+      <div className="container form-group">
+        <label><h5>Input Text Below- </h5></label>
+        <textarea value={curr} className="form-control my-2" id="area1" placeholder="Enter text here" rows="8"  onChange={handleChange}></textarea>
       </div>
-    </>
+      <div className="container">
+        <p onMouseEnter={handleOver} onMouseLeave={handleLeave}><strong>Reversed text-</strong> {txt}</p>
+        <p><strong>Hover on the above text to see colored vowels.</strong></p>
+        <button type="button" className="btn btn-info" onClick={handleReset}>Reset</button>
+      </div>
+    </div>
   );
 }
 
